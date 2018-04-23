@@ -3,6 +3,8 @@ package edu.illinois.cs.cs125.lab12;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,6 +41,18 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startAPICall();
+
+        // Create button
+        final Button refreshButton = findViewById(R.id.get_weather);
+
+        //specify an action when the button is pressed,
+        // set a click listener on the button object in the corresponding activity code:
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(final View v) {
+                // Code here executes on main thread after user presses button
+                startAPICall();
+            }
+        });
     }
 
     /**
@@ -76,5 +90,14 @@ public final class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Refresh weather button.
+     * @param view not sure what this does
+     *
+     */
+    public void getWeather(final View view) {
+        Log.d(TAG, "button was pressed");
     }
 }
