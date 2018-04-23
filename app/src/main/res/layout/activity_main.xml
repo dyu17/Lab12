@@ -8,6 +8,12 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="160dp"
+        android:layout_height="132dp"
+        app:srcCompat="@drawable/radar" />
+
     <TextView
         android:id="@+id/main_title"
         android:layout_width="match_parent"
