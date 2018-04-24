@@ -1,5 +1,6 @@
 package edu.illinois.cs.cs125.lab12;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,10 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Main class for our UI design lab.
@@ -41,14 +46,14 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Create button
-        final Button refreshButton = findViewById(R.id.get_weather);
+        final Button refreshButton = findViewById(R.id.go_button);
 
         //specify an action when the button is pressed,
         // set a click listener on the button object in the corresponding activity code:
         refreshButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(final View v) {
                 // Code here executes on main thread after user presses button
-                startAPICall();
+
             }
         });
     }
@@ -62,28 +67,25 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Make a call to the weather API.
+     * Make a call to the open-sky network API.
      */
     void startAPICall() {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "http://api.openweathermap.org/data/2.5/weather?zip=61820,us&appid="
-                            + BuildConfig.API_KEY,
+                    "https://opensky-network.org/api/states/all?time=0",
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(final JSONObject response) {
-                            try {
-                                Log.d(TAG, response.toString(2));
-                            } catch (JSONException ignored) { }
+                            //Log.d(TAG, response.toString());
                         }
                     }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(final VolleyError error) {
-                            Log.e(TAG, error.toString());
-                        }
-                    });
+                @Override
+                public void onErrorResponse(final VolleyError error) {
+                    Log.w(TAG, error.toString());
+                }
+            });
             requestQueue.add(jsonObjectRequest);
         } catch (Exception e) {
             e.printStackTrace();
