@@ -40,8 +40,6 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        startAPICall();
-
         // Create button
         final Button refreshButton = findViewById(R.id.get_weather);
 
