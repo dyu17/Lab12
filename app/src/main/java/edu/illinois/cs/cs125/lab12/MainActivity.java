@@ -57,9 +57,10 @@ public final class MainActivity extends AppCompatActivity {
         go_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+
                 Log.d(TAG, "Open file button clicked");
                 TextView textView = findViewById(R.id.text);
-                textView.setText("Hello bitch");
+                textView.setText("Hello");
                 textView.setVisibility(View.VISIBLE);
                 //startGo_button();
             }
