@@ -66,19 +66,28 @@ public final class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    // Global string variable to store JSON response
+    String jsonResult;
+
     /**
      * Make a call to the open-sky network API.
      */
-    void startAPICall() {
+     void startAPICall() {
+        // NOTE: The current REST URL has an ICAO filter on the end to temporarily
+        //       make the return string smaller. The final version will
+        //       call without the fitler and parse the data.
+
+
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "https://opensky-network.org/api/states/all?time=0",
+                    "https://opensky-network.org/api/states/all?time=1458564121&icao24=3c6444",
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(final JSONObject response) {
                             //Log.d(TAG, response.toString());
+                            jsonResult = response.toString();
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -90,14 +99,18 @@ public final class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     /**
-     * Refresh weather button.
+     * Make API Call + Display it?
      * @param view not sure what this does
      *
      */
-    public void getWeather(final View view) {
+    public void runOnGo(final View view) {
         Log.d(TAG, "button was pressed");
+        startAPICall();
+        Log.d(TAG, jsonResult);
+
     }
 }
