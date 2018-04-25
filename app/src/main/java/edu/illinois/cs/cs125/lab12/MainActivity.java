@@ -62,7 +62,7 @@ public final class MainActivity extends AppCompatActivity {
                 TextView textView = findViewById(R.id.text);
                 textView.setText("Hello");
                 textView.setVisibility(View.VISIBLE);
-                //startGo_button();
+                //startGo_button(); /c
             }
         });
 
