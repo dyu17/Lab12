@@ -66,6 +66,7 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
+
         /**
          * Make the go_button do something .
          */
@@ -133,15 +134,4 @@ public final class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Make API Call + Display it?
-     * @param view not sure what this does
-     *
-     */
-    public void runOnGo(final View view) {
-        Log.d(TAG, "button was pressed");
-        startAPICall();
-        Log.d(TAG, jsonResult);
-
-    }
 }
