@@ -47,20 +47,19 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Create button
-        final Button refreshButton = findViewById(R.id.go_button);
-
         /*
          * Set up handlers for each button in our UI. These run when the buttons are clicked.
          */
         final Button go_button = findViewById(R.id.go_button);
+
         go_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
 
+                startAPICall();
                 Log.d(TAG, "Open file button clicked");
                 TextView textView = findViewById(R.id.text);
-                textView.setText("Hello");
+                textView.setText(jsonResult);
                 textView.setVisibility(View.VISIBLE);
                 //startGo_button(); /c
             }
@@ -70,7 +69,7 @@ public final class MainActivity extends AppCompatActivity {
         /**
          * Make the go_button do something .
          */
-//        private void startGo_button() {
+//         void startGo_button() {
 //            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 //            intent.addCategory(Intent.CATEGORY_OPENABLE);
 //            intent.setType("image/*");
@@ -81,13 +80,7 @@ public final class MainActivity extends AppCompatActivity {
 
         //specify an action when the button is pressed,
         // set a click listener on the button object in the corresponding activity code:
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(final View v) {
-                // Code here executes on main thread after user presses button
 
-
-            }
-        });
     }
 
     /**
@@ -99,7 +92,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     // Global string variable to store JSON response
-    String jsonResult;
+    String jsonResult = "No planes in the sky rn";
 
     /**
      * Make a call to the open-sky network API.
@@ -113,7 +106,7 @@ public final class MainActivity extends AppCompatActivity {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "https://opensky-network.org/api/states/all?time=1458564121&icao24=3c6444",
+                    "https://opensky-network.org/api/states/all?time=0",
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
