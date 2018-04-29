@@ -1,5 +1,6 @@
 package edu.illinois.cs.cs125.lab12;
 
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ImageButton;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,8 +24,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+
+
+
+
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Main class for our UI design .
@@ -55,13 +65,22 @@ public final class MainActivity extends AppCompatActivity {
         go_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
-                startAPICall();
+                String textOutput[] = startAPICall();
                 Log.d(TAG, "Open file button clicked");
+                Log.d(TAG, textOutput[0]);
+                String finalOutput = "\n";
+                for (int i = 1; i < textOutput.length; i++) {
+                    if (textOutput[i] != null) {
+                    finalOutput = finalOutput + textOutput[i] + "\n";
+                    }
+                }
+
+
                 TextView textView = findViewById(R.id.text);
-                textView.setText(jsonResult);
+                textView.setText(finalOutput);
+                textView.setText(textOutput[0] + "\n" + finalOutput);
                 textView.setVisibility(View.VISIBLE);
-                //startGo_button(); /c
+
             }
         });
 
@@ -97,16 +116,22 @@ public final class MainActivity extends AppCompatActivity {
     /**
      * Make a call to the open-sky network API.
      */
-     void startAPICall() {
+     String[] startAPICall() {
         // NOTE: The current REST URL has an ICAO filter on the end to temporarily
         //       make the return string smaller. The final version will
         //       call without the fitler and parse the data.
 
 
+         // MAKE THE CALL, AND STORE THE RESULT IN 'jsonResult'
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "https://opensky-network.org/api/states/all?time=0",
+                    "\n" +
+                            "https://opensky-network.org/api/states/" +
+                            "all?lamin=33.53160370277882" +
+                            "&lomin=-84.60537329722118" +
+                            "&lamax=33.966386297221185" +
+                            "&lomax=-84.17059070277881",
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -125,6 +150,52 @@ public final class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
+        String[] backup = {"API Call or Time parse had no result"};
+        // IF THERE WAS A RESULT, DO THIS
+        if (!jsonResult.equals("No planes in the sky rn")) {
+
+
+            // Get JSON Object with everything
+            JsonParser parser = new JsonParser();
+            JsonObject rootObject = parser.parse(jsonResult).getAsJsonObject();
+            JsonArray states = rootObject.get("states").getAsJsonArray();
+
+            // Get data timestamp as string (formattedDate)
+            int unixTimeStamp = rootObject.get("time").getAsInt();
+            Date date = new java.util.Date(unixTimeStamp*1000L);
+            SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+            String formattedDate = sdf.format(date);
+
+
+            // Create array of strings describing each aircraft
+            JsonArray temp;
+            String[] aircraftList = new String[states.size()];
+            String  callsign;
+            float[] position = new float[2];
+            float   altitude;
+            float   velocity;
+            float   heading;
+            for (int i = 1; i < aircraftList.length; i++) {
+                temp = states.get(i).getAsJsonArray();
+                callsign = temp.get(1).getAsString();
+                position[0] = temp.get(6).getAsFloat();
+                position[1] = temp.get(5).getAsFloat();
+                altitude = temp.get(7).getAsFloat();
+                velocity = temp.get(9).getAsFloat();
+                heading = temp.get(10).getAsFloat();
+
+                aircraftList[i] = "Callsign " + callsign
+                        + " is at " + position[0] + " lat, "
+                        + position[1] + " lon, " + "with a velocity of "
+                        + velocity + " m/s and heading of " + heading
+                        + " degrees.";
+            }
+            aircraftList[0] = "This data was recorded: " + formattedDate;
+            return aircraftList;
+        }
+
+        return backup;
     }
 
 }
