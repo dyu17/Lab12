@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ImageButton;
+import android.app.Activity;
+
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
@@ -84,21 +87,29 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
+        SeekBar radiusBar = findViewById(R.id.seekBar2);
 
-        /**
-         * Make the go_button do something .
-         */
-//         void startGo_button() {
-//            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//            intent.addCategory(Intent.CATEGORY_OPENABLE);
-//            intent.setType("image/*");
-//            startActivityForResult(intent, READ_REQUEST_CODE);
-//        }
+        radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar radiusBar, int progress, boolean fromUser) {
 
+                range = progress*5;
+                TextView units = findViewById(R.id.radiusDisplay);
+                units.setText(String.valueOf(range));
+                units.setVisibility(View.VISIBLE);
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar radiusBar) {
 
-        //specify an action when the button is pressed,
-        // set a click listener on the button object in the corresponding activity code:
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar radiusBar) {
+
+            }
+        });
+
 
     }
 
@@ -113,25 +124,41 @@ public final class MainActivity extends AppCompatActivity {
     // Global string variable to store JSON response
     String jsonResult = "No planes in the sky rn";
 
+    // Global range variable to store user range
+    float range = 0;
+
+    // Global lat/lon variables to store user position (will be dynamic later)
+    double latitude = 33.748995;
+    double longitude =   -84.387982;
+
+
     /**
      * Make a call to the open-sky network API.
      */
      String[] startAPICall() {
-        // NOTE: The current REST URL has an ICAO filter on the end to temporarily
-        //       make the return string smaller. The final version will
-        //       call without the fitler and parse the data.
 
+         // Create REST API url call based on user inputs.
+
+         // Radius [miles] > [degrees]
+         float ra = range/69;
+
+         // Create bounding box based on location + radius
+         double lamin; double lamax; double lomin; double lomax;
+         double la = latitude; double lo = longitude;
+         lamin = la - ra; lamax = la + ra; lomin = lo - ra; lomax = lo +ra;
+
+         String query = "https://opensky-network.org/api/states/all?" +
+                 "lamin=" + lamin + "&lomin=" + lomin + "&lamax=" + lamax +
+                 "&lomax=" + lomax;
+
+         Log.w(TAG,"query: " + query);
 
          // MAKE THE CALL, AND STORE THE RESULT IN 'jsonResult'
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
                     "\n" +
-                            "https://opensky-network.org/api/states/" +
-                            "all?lamin=33.53160370277882" +
-                            "&lomin=-84.60537329722118" +
-                            "&lamax=33.966386297221185" +
-                            "&lomax=-84.17059070277881",
+                            query,
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
