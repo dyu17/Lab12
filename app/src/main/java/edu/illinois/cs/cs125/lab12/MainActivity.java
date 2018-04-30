@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.app.Activity;
 
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
@@ -59,6 +60,14 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Retrieve the content view that renders the map.
+        setContentView(R.layout.activity_maps);
+        // Get the SupportMapFragment and request notification
+        // when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+
+
         // Set up the queue for our API requests
         requestQueue = Volley.newRequestQueue(this);
 
@@ -81,12 +90,14 @@ public final class MainActivity extends AppCompatActivity {
         go_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                Log.d(TAG,"");
+                Log.d(TAG, "Go Button Clicked");
                 String textOutput[] = startAPICall();
-                Log.d(TAG, "Open file button clicked");
-                Log.d(TAG, textOutput[0]);
+                //Log.d(TAG, textOutput[0]);
                 String finalOutput = "\n";
                 for (int i = 1; i < textOutput.length; i++) {
                     if (textOutput[i] != null) {
+                        Log.d(TAG,"Text output line " + i + ": " + textOutput[i]);
                     finalOutput = finalOutput + textOutput[i] + "\n";
                     }
                 }
@@ -96,6 +107,7 @@ public final class MainActivity extends AppCompatActivity {
                 textView.setText(finalOutput);
                 textView.setText(textOutput[0] + "\n" + finalOutput);
                 textView.setVisibility(View.VISIBLE);
+                jsonResult = "No planes in the sky rn";
 
             }
         });
@@ -145,6 +157,7 @@ public final class MainActivity extends AppCompatActivity {
     double latitude = 33.748995;
     double longitude =   -84.387982;
 
+    // AIzaSyCpNAw_Pk0Tk2YxLgojO0XL11bJdMRvX_k
 
     /**
      * Make a call to the open-sky network API.
@@ -179,7 +192,9 @@ public final class MainActivity extends AppCompatActivity {
              }
          Log.d(TAG, "");
          Log.d(TAG, "latitude input: " + latitude);
+         Log.d(TAG,"");
          Log.d(TAG, "longitude input: " + longitude);
+         Log.d(TAG,"");
          // Radius [miles] > [degrees]
          float ra = range/69;
 
@@ -195,29 +210,34 @@ public final class MainActivity extends AppCompatActivity {
          Log.w(TAG,"query: " + query);
 
          // MAKE THE CALL, AND STORE THE RESULT IN 'jsonResult'
-        try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.GET,
-                    "\n" +
-                            query,
-                    null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(final JSONObject response) {
-                            //Log.d(TAG, response.toString());
-                            jsonResult = response.toString();
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(final VolleyError error) {
-                    Log.w(TAG, error.toString());
-                }
-            });
-            requestQueue.add(jsonObjectRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+             try {
+                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                         Request.Method.GET,
+                         "\n" +
+                                 query,
+                         null,
+                         new Response.Listener<JSONObject>() {
+                             @Override
+                             public void onResponse(final JSONObject response) {
+                                 //Log.d(TAG, response.toString());
+                                 jsonResult = response.toString();
+                             }
+                         }, new Response.ErrorListener() {
+                     @Override
+                     public void onErrorResponse(final VolleyError error) {
+                         Log.w(TAG, error.toString());
+                     }
+                 });
+                 requestQueue.add(jsonObjectRequest);
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }
+
+             Log.d(TAG, "");
+             Log.d(TAG, "jsonResult:");
+             Log.d(TAG, jsonResult);
+             Log.d(TAG, "");
 
         String[] backup = {"API Call or Time parse had no result"};
         // IF THERE WAS A RESULT, DO THIS
@@ -246,6 +266,7 @@ public final class MainActivity extends AppCompatActivity {
             float   heading;
             for (int i = 1; i < aircraftList.length; i++) {
                 temp = states.get(i).getAsJsonArray();
+
                 callsign = temp.get(1).getAsString();
                 position[0] = temp.get(6).getAsFloat();
                 position[1] = temp.get(5).getAsFloat();
@@ -255,15 +276,17 @@ public final class MainActivity extends AppCompatActivity {
 
                 aircraftList[i] = "Callsign " + callsign
                         + " is at " + position[0] + " lat, "
-                        + position[1] + " lon, " + "with a velocity of "
+                        + position[1] + " lon, " + altitude +
+                        " m altitude, " + "with a velocity of "
                         + velocity + " m/s and heading of " + heading
                         + " degrees.";
             }
             aircraftList[0] = "This data was recorded: " + formattedDate;
             return aircraftList;
-        }
+        } else {
 
-        return backup;
+            return backup;
+        }
     }
 
 }
