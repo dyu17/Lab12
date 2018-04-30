@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ImageButton;
@@ -46,6 +47,9 @@ public final class MainActivity extends AppCompatActivity {
     /** Request queue for our API requests. */
     private static RequestQueue requestQueue;
 
+    EditText latitudeText;
+    EditText longitudeText;
+
     /**
      * Run when this activity comes to the foreground.
      *
@@ -59,6 +63,15 @@ public final class MainActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
 
         setContentView(R.layout.activity_main);
+
+
+        /*
+         * Implmentaiton of Edit Texts to read lat/lon inputs
+         */
+
+        // Set up handles for each edit text.
+        latitudeText = (EditText) findViewById(R.id.Lattitude);
+        longitudeText = (EditText) findViewById(R.id.Longitude);
 
         /*
          * Set up handlers for each button in our UI. These run when the buttons are clicked.
@@ -87,6 +100,7 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Implementation of Seekbar to set radius.
         SeekBar radiusBar = findViewById(R.id.seekBar2);
 
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -139,6 +153,33 @@ public final class MainActivity extends AppCompatActivity {
 
          // Create REST API url call based on user inputs.
 
+         // Read position from Edit Text.
+
+         String latText = latitudeText.getText().toString();
+         String lonText = longitudeText.getText().toString();
+
+         if(!latText.isEmpty())
+             try
+             {
+                 latitude= Double.parseDouble(latText);
+                 // it means it is double
+             } catch (Exception e1) {
+                 // this means it is not double
+                 e1.printStackTrace();
+             }
+
+         if(!lonText.isEmpty())
+             try
+             {
+                 longitude= Double.parseDouble(lonText);
+                 // it means it is double
+             } catch (Exception e1) {
+                 // this means it is not double
+                 e1.printStackTrace();
+             }
+         Log.d(TAG, "");
+         Log.d(TAG, "latitude input: " + latitude);
+         Log.d(TAG, "longitude input: " + longitude);
          // Radius [miles] > [degrees]
          float ra = range/69;
 

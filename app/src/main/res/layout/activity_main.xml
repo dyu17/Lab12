@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal|numberSigned" />
 
     <TextView
         android:id="@+id/lat_desc"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal|numberSigned" />
 
     <TextView
         android:id="@+id/long_desc"
