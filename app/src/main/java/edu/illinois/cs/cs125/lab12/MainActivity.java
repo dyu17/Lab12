@@ -38,6 +38,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 /**
  * Main class for our UI design .
  */
@@ -138,6 +140,23 @@ public final class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+    /** This would be how we open up a map if I could get it to work */
+    /*
+    public void sendMessage(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(MainActivity.this, activity_maps.class);
+        String latSend = latitudeText.getText().toString();
+        String lonSend = longitudeText.getText().toString();
+        String[] position = new String[2];
+        position[0] = latSend;
+        position[1] = lonSend;
+        intent.putExtra(EXTRA_MESSAGE, position);
+        startActivity(intent);
+    }
+
+*/
 
     /**
      * Run when this activity is no longer visible.
@@ -288,5 +307,6 @@ public final class MainActivity extends AppCompatActivity {
             return backup;
         }
     }
+
 
 }
